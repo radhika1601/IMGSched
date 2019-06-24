@@ -1,0 +1,4 @@
+./IMGSched/__pycache__/
+./schedule/__pycache__/
+./schedule/migrations/__pycache__/
+./IMGSched/conf.py

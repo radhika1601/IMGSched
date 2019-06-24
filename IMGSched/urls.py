@@ -15,9 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
+from schedule import views
 
 urlpatterns = [
+	# path('authenticate/', include('social_django.urls', namespace='social')),
+    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+	
     path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls')),
-    path('', include('schedule.urls'))
+    path('api-auth/', include('social_django.urls', namespace='social')),
+    path('', views.index, name='home'),
+    path('schedule/', include('schedule.urls')),
 ]

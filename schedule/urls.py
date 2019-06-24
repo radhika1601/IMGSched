@@ -2,7 +2,7 @@ from django.urls import path, include
 from schedule import views
 from rest_framework.routers import DefaultRouter
 from rest_framework.schemas import get_schema_view
-
+# from .views import home
 schema_view = get_schema_view(title='Schedular API')
 
 router = DefaultRouter()

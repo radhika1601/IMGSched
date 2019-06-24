@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+from .keys import auth_keys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -39,7 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'schedule',
     'rest_framework',
+    # 'corsheaders',
+    'social_django',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -49,14 +53,17 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
+    # 'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
+
 
 ROOT_URLCONF = 'IMGSched.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -64,6 +71,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -88,6 +97,7 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'schedule.Users'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -107,6 +117,41 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email', 'profile']
+
+# SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']
+
+# LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/schedule/meeting'
+
+# If this is not set, PSA constructs a plausible username from the first portion of the
+# user email, plus some random disambiguation characters if necessary.
+# SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '570137200285-ac0q9krf77pe1hjgherjif8i3ula5tdn.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '1xnKKg21dvEyo_jx9NdZo_1k'
+# SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+# SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+AUTH_USER_MODEL = 'schedule.User'
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',  # <- this line not included by default
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -126,3 +171,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# LOGIN_URL = '/'
+# LOGIN_REDIRECT_URL = '/'
+
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = auth_keys['google_key']
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = auth_keys['google_secret']
