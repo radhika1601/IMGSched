@@ -3,7 +3,7 @@ from rest_framework.validators import UniqueValidator
 from schedule.models import Meeting, User
 
 class MeetingSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.username')
+    owner = serializers.ReadOnlyField(source='owner.id')
     invitees = serializers.HyperlinkedRelatedField(queryset=User.objects.all(), many=True, view_name='user-detail' )
 
     class Meta:
